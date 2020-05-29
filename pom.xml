@@ -23,7 +23,7 @@
         <dependencies>
             <dependency>
                 <groupId>com.mydemo</groupId>
-                <artifactId>easy_excel</artifactId>
+                <artifactId>easyexcel</artifactId>
                 <version>0.0.1-SNAPSHOT</version>
             </dependency>
 
