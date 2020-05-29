@@ -129,6 +129,7 @@ public class DownController {
      * @param response the response
      * @throws IOException the io exception
      */
+    @GetMapping("repeatedWrite")
     public void repeatedWrite(HttpServletResponse response) throws IOException {
         response.setContentType("application/vnd.ms-excel");
         response.setCharacterEncoding("utf-8");

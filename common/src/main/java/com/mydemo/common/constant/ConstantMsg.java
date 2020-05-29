@@ -14,4 +14,13 @@ public class ConstantMsg {
     public static final String FAILURE_INSERT = "保存失败";
     public static final String FAILURE_DELETE = "删除失败";
 
+    public static final String IP_UN_KNOWN = "unKnown";
+
+    /**
+     * e-mail
+     */
+    public static final String TYPE_TO = "to";
+    public static final String TYPE_FROM = "from";
+    public static final String TYPE_SUBJECT = "subject";
+
 }
