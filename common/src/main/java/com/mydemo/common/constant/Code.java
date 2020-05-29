@@ -1,4 +1,4 @@
-package com.mydemo.common.contanst;
+package com.mydemo.common.constant;
 
 
 

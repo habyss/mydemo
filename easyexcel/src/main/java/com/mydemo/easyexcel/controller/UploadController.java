@@ -4,6 +4,7 @@ import com.alibaba.excel.EasyExcel;
 import com.alibaba.excel.ExcelReader;
 import com.alibaba.excel.read.metadata.ReadSheet;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.mydemo.common.constant.ConstantMsg;
 import com.mydemo.common.result.BaseAO;
 import com.mydemo.common.result.JsonResult;
 import com.mydemo.easyexcel.entity.DemoData;
@@ -56,7 +57,7 @@ public class UploadController {
             LOGGER.info("读取到数据:{}", objectMapper.writeValueAsString(data));
         }
         System.out.println(listMap.size());
-        return JsonResult.successMap("success", listMap);
+        return JsonResult.successMap(ConstantMsg.SUCCESS_FIND, listMap);
     }
 
     /**
@@ -75,7 +76,7 @@ public class UploadController {
             LOGGER.info("读取到数据:{}", objectMapper.writeValueAsString(data));
         }
         System.out.println(list.size());
-        return JsonResult.successMap("success", list);
+        return JsonResult.successMap(ConstantMsg.SUCCESS_FIND, list);
     }
 
     /**
@@ -89,7 +90,7 @@ public class UploadController {
     public BaseAO normalExcelNoBeanNoBack(@RequestParam("file") MultipartFile file) throws IOException {
         // sheetNo 0为第一个sheet -> 依次
         EasyExcel.read(file.getInputStream(), new NoModelDataListener()).sheet(0).doRead();
-        return JsonResult.successMap("success");
+        return JsonResult.successMap(ConstantMsg.SUCCESS_FIND);
     }
 
     /**
@@ -103,7 +104,7 @@ public class UploadController {
     public BaseAO normalExcelHasBeanNoBack(@RequestParam("file") MultipartFile file) throws IOException {
         // sheetNo 0为第一个sheet -> 依次
         EasyExcel.read(file.getInputStream(), DemoData.class, new DemoDataListener(objectMapper)).sheet(0).doRead();
-        return JsonResult.successMap("success");
+        return JsonResult.successMap(ConstantMsg.SUCCESS_FIND);
     }
 
 
@@ -112,7 +113,7 @@ public class UploadController {
      * <p>
      * 1. 创建excel对应的实体对象 参照{@link DemoData}
      * <p>
-     * 2. 由于默认一行行的读取excel，所以需要创建excel一行一行的回调监听器，参照{@link DemoDataListener}
+     * 2. 由于默认一行行的读取excel，所以需要创建excel一行一行的回调监听器，参照{@link DemoD5ataListener}
      * <p>
      * 3. 直接读即可
      */
@@ -135,7 +136,7 @@ public class UploadController {
         // 这里千万别忘记关闭，读的时候会创建临时文件，到时磁盘会崩的
         excelReader.finish();
 
-        return JsonResult.successMap("success");
+        return JsonResult.successMap(ConstantMsg.SUCCESS_FIND);
     }
 
 }

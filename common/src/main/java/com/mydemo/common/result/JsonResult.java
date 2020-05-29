@@ -2,7 +2,7 @@ package com.mydemo.common.result;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
-import com.mydemo.common.contanst.Code;
+import com.mydemo.common.constant.Code;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
