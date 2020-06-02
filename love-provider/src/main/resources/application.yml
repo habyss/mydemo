@@ -1,0 +1,76 @@
+server:
+  port: 10002
+
+
+steal-url: https://chp.shadiao.app/api.php
+
+
+spring:
+  # 设置date返回数据为时间戳
+  jackson:
+    serialization:
+      WRITE_DATES_AS_TIMESTAMPS: true
+  application:
+    name: love-provider
+
+  datasource:
+    username: hankun
+    password: Hankun0421.
+    driverClassName: com.mysql.cj.jdbc.Driver
+    url: jdbc:mysql://182.43.148.85:3306/wf?serverTimezone=CTT
+    # 多数据源
+#  datasource:
+#    wf:
+#      username: hankun
+#      password: Hankun0421.
+#      driverClassName: com.mysql.cj.jdbc.Driver
+#      jdbc-url: jdbc:mysql://182.43.148.85:3306/wf?serverTimezone=CTT # 多数据源需要jdbc-url 单数据源url
+#    test:
+#      username: hankun
+#      password: Hankun0421.
+#      driverClassName: com.mysql.cj.jdbc.Driver
+#      jdbc-url: jdbc:mysql://182.43.148.85:3306/test?serverTimezone=CTT # 多数据源需要jdbc-url 单数据源url
+  mail:
+    host: smtp.163.com
+    username: hankun_0421@163.com
+    password: Hankun0421
+    port: 465
+  #  rabbitmq:
+  #    host: 47.107.137.149
+  #    port: 15672
+  #    username: hankun
+  #    password: Hankun0421
+  task:
+    execution:
+      pool:
+        allow-core-thread-timeout: true
+        core-size: 10
+        keep-alive: 60s
+        max-size: 20
+        queue-capacity: 40
+      thread-name-prefix: 'Thread-'
+
+
+mybatis:
+  mapper-locations: classpath:mapper/*.xml
+  configuration:
+    map-underscore-to-camel-case: true
+    use-generated-keys: true
+    # 多数据源需要分别单设置参数
+#  configuration:
+#    wf:
+#      map-underscore-to-camel-case: true
+#      use-generated-keys: true
+#    test:
+#      map-underscore-to-camel-case: true
+#      use-generated-keys: true
+
+eureka:
+  instance:
+    hostname: love-provider
+    lease-renewal-interval-in-seconds: 5
+    lease-expiration-duration-in-seconds: 10
+  client:
+    service-url:
+      defaultZone: http://182.43.148.85:8761/eureka/
+#      defaultZone: http://10.0.31.34:8761/eureka/

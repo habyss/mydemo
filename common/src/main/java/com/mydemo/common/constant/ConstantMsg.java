@@ -13,6 +13,8 @@ public class ConstantMsg {
     public static final String FAILURE_UPDATE = "更新失败";
     public static final String FAILURE_INSERT = "保存失败";
     public static final String FAILURE_DELETE = "删除失败";
+    public static final String SUCCESS_SEND = "发送成功";
+    public static final String FAILURE_SEND = "发送失败";
 
     public static final String IP_UN_KNOWN = "unKnown";
 
