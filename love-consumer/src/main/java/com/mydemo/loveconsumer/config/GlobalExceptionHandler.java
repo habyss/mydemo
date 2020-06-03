@@ -1,4 +1,4 @@
-package com.mydemo.zuul.config;
+package com.mydemo.loveconsumer.config;
 
 import com.mydemo.common.result.BaseAO;
 import com.mydemo.common.result.JsonResult;
