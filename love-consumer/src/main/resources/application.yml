@@ -12,14 +12,7 @@ spring:
 
 
 eureka:
-  instance:
-    hostname: love-consumer
-    lease-renewal-interval-in-seconds: 5
-    lease-expiration-duration-in-seconds: 10
-    prefer-ip-address: true
   client:
-    registerWithEureka: true
-    fetchRegistry: true
     service-url:
       defaultZone: http://182.43.148.85:8761/eureka/
 #      defaultZone: http://10.0.31.34:8761/eureka/
