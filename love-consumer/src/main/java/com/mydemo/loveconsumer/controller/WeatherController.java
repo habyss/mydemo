@@ -1,7 +1,7 @@
 package com.mydemo.loveconsumer.controller;
 
 import com.mydemo.common.result.BaseAO;
-import com.mydemo.loveconsumer.entity.WeatherConfig;
+import com.mydemo.loveconsumer.entity.model.PageParam;
 import com.mydemo.loveconsumer.service.WeatherServiceProxy;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -9,8 +9,7 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 import javax.annotation.Resource;
-import java.util.List;
-import java.util.Map;
+import javax.validation.Valid;
 
 /**
  * @author kun.han on 2020/6/2 17:02
@@ -58,8 +57,8 @@ public class WeatherController {
      * @return list
      */
     @GetMapping("getAllSubject")
-    BaseAO getAllSubject(){
-        return weatherServiceProxy.getAllSubject();
+    BaseAO getAllSubject(@Valid PageParam pageParam){
+        return weatherServiceProxy.getAllSubject(pageParam);
     }
 
     @RequestMapping("test")

@@ -1,5 +1,5 @@
 server:
-  port: 10003
+  port: 10004
 
 
 spring:
@@ -8,7 +8,7 @@ spring:
     serialization:
       WRITE_DATES_AS_TIMESTAMPS: true
   application:
-    name: love-consumer
+    name: zuul
 
 
     #      Spring Cloud Netflix Ribbon现在处于维护模式，因此我们建议改用Spring Cloud LoadBalancer
@@ -22,7 +22,7 @@ spring:
 eureka:
   client:
     service-url:
-#      defaultZone: http://182.43.148.85:8761/eureka/
+      #      defaultZone: http://182.43.148.85:8761/eureka/
       defaultZone: http://10.0.31.34:8761/eureka/
 feign:
   client:
@@ -30,4 +30,15 @@ feign:
       default:
         connectTimeout: 20000
         readTimeout: 20000
+
+
+zuul:
+  routes:
+    love-consumer:
+      path: /love/*
+      serviceId: love-consumer #对应服务名称
+    easyexcel:
+      path: /excel/*
+      serviceId: easyexcel #对应服务名称
+
 

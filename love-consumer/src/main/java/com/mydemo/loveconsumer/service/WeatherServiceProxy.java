@@ -1,7 +1,9 @@
 package com.mydemo.loveconsumer.service;
 
 import com.mydemo.common.result.BaseAO;
+import com.mydemo.loveconsumer.entity.model.PageParam;
 import org.springframework.cloud.openfeign.FeignClient;
+import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 
@@ -39,10 +41,11 @@ public interface WeatherServiceProxy {
     /**
      * 获取所有的subject
      *
-     * @return list
+     * @param pageParam the page info
+     * @return list all subject
      */
     @RequestMapping("getAllSubject")
-    BaseAO getAllSubject();
+    BaseAO getAllSubject(@RequestBody PageParam pageParam);
 
     @RequestMapping("test")
     BaseAO test();

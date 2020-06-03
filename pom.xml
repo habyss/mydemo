@@ -17,6 +17,7 @@
 
     <properties>
         <java.version>1.8</java.version>
+        <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
     </properties>
 
     <dependencyManagement>
@@ -24,12 +25,33 @@
             <dependency>
                 <groupId>com.mydemo</groupId>
                 <artifactId>easyexcel</artifactId>
-                <version>0.0.1-SNAPSHOT</version>
+                <version>V-0.0.1-20200603</version>
             </dependency>
 
             <dependency>
                 <groupId>com.mydemo</groupId>
                 <artifactId>common</artifactId>
+                <version>0.0.1-SNAPSHOT</version>
+            </dependency>
+
+            <dependency>
+                <groupId>com.mydemo</groupId>
+                <artifactId>zuul</artifactId>
+                <version>0.0.1-SNAPSHOT</version>
+            </dependency>
+            <dependency>
+                <groupId>com.mydemo</groupId>
+                <artifactId>love-consumer</artifactId>
+                <version>V-0.0.1-20200603</version>
+            </dependency>
+            <dependency>
+                <groupId>com.mydemo</groupId>
+                <artifactId>love-provider</artifactId>
+                <version>V-0.0.1-20200603</version>
+            </dependency>
+            <dependency>
+                <groupId>com.mydemo</groupId>
+                <artifactId>eureka</artifactId>
                 <version>0.0.1-SNAPSHOT</version>
             </dependency>
         </dependencies>
@@ -38,6 +60,10 @@
     <modules>
         <module>easyexcel</module>
         <module>common</module>
+        <module>zuul</module>
+        <module>eureka</module>
+        <module>love-provider</module>
+        <module>love-consumer</module>
     </modules>
 
 </project>

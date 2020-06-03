@@ -30,6 +30,14 @@ spring:
 #      password: Hankun0421.
 #      driverClassName: com.mysql.cj.jdbc.Driver
 #      jdbc-url: jdbc:mysql://182.43.148.85:3306/test?serverTimezone=CTT # 多数据源需要jdbc-url 单数据源url
+
+
+#      Spring Cloud Netflix Ribbon现在处于维护模式，因此我们建议改用Spring Cloud LoadBalancer
+  cloud:
+    loadbalancer:
+      ribbon:
+        enabled: false
+
   mail:
     host: smtp.163.com
     username: hankun_0421@163.com
@@ -68,8 +76,11 @@ mybatis:
 eureka:
   client:
     service-url:
-      defaultZone: http://182.43.148.85:8761/eureka/
-#      defaultZone: http://10.0.31.34:8761/eureka/
+#      defaultZone: http://182.43.148.85:8761/eureka/
+      defaultZone: http://10.0.31.34:8761/eureka/
+
+#  instance:
+#    lease-renewal-interval-in-seconds: 10
 
 feign:
   client:

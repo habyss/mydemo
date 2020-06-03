@@ -3,6 +3,11 @@ server:
 spring:
   application:
     name: easyexcel
+  #      Spring Cloud Netflix Ribbon现在处于维护模式，因此我们建议改用Spring Cloud LoadBalancer
+  cloud:
+    loadbalancer:
+      ribbon:
+        enabled: false
 
 
 eureka:

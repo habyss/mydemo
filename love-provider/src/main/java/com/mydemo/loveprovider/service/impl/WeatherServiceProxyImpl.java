@@ -3,10 +3,13 @@ package com.mydemo.loveprovider.service.impl;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.github.pagehelper.PageHelper;
+import com.github.pagehelper.PageInfo;
 import com.mydemo.common.constant.ConstantMsg;
 import com.mydemo.common.result.BaseAO;
 import com.mydemo.common.result.JsonResult;
 import com.mydemo.loveprovider.entity.WeatherConfig;
+import com.mydemo.loveprovider.entity.model.PageParam;
 import com.mydemo.loveprovider.entity.model.Weather;
 import com.mydemo.loveprovider.entity.model.WeatherCustom;
 import com.mydemo.loveprovider.entity.model.WeatherDetail;
@@ -19,11 +22,11 @@ import org.springframework.http.*;
 import org.springframework.mail.SimpleMailMessage;
 import org.springframework.mail.javamail.JavaMailSenderImpl;
 import org.springframework.util.CollectionUtils;
+import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.client.RestTemplate;
 
 import javax.annotation.Resource;
-import java.io.IOException;
 import java.time.DayOfWeek;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
@@ -212,15 +215,17 @@ public class WeatherServiceProxyImpl implements WeatherServiceProxy {
      * @return list
      */
     @Override
-    public BaseAO getAllSubject() {
-        List<WeatherConfig> allByType = weatherConfigMapper.getAllByType(ConstantMsg.TYPE_SUBJECT);
+    public BaseAO getAllSubject(@RequestBody PageParam pageParam) {
+        PageHelper.startPage(pageParam.getPageNum(), pageParam.getPageSize());
+        List<WeatherConfig> subjectResult = weatherConfigMapper.getAllByType(ConstantMsg.TYPE_SUBJECT);
         try {
-            System.out.println(objectMapper.writeValueAsString(allByType));
+            System.out.println(objectMapper.writeValueAsString(subjectResult));
         } catch (JsonProcessingException e) {
             e.printStackTrace();
-            return JsonResult.failureMap(ConstantMsg.JACKSON_ERROR_AS_STRING, allByType);
+            return JsonResult.failureMap(ConstantMsg.JACKSON_ERROR_AS_STRING, subjectResult);
         }
-        return JsonResult.successMap(ConstantMsg.SUCCESS_FIND, allByType);
+        PageInfo<WeatherConfig> info = new PageInfo<>(subjectResult);
+        return JsonResult.successMap(ConstantMsg.SUCCESS_FIND, info);
     }
 
     @Override
