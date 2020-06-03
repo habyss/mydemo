@@ -4,6 +4,8 @@ package com.mydemo.loveprovider.service.impl;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.mydemo.common.constant.ConstantMsg;
+import com.mydemo.common.result.BaseAO;
+import com.mydemo.common.result.JsonResult;
 import com.mydemo.loveprovider.entity.WeatherConfig;
 import com.mydemo.loveprovider.entity.model.Weather;
 import com.mydemo.loveprovider.entity.model.WeatherCustom;
@@ -16,7 +18,6 @@ import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.*;
 import org.springframework.mail.SimpleMailMessage;
 import org.springframework.mail.javamail.JavaMailSenderImpl;
-import org.springframework.stereotype.Service;
 import org.springframework.util.CollectionUtils;
 import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.client.RestTemplate;
@@ -26,7 +27,6 @@ import java.io.IOException;
 import java.time.DayOfWeek;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
-import java.util.Date;
 import java.util.List;
 import java.util.Map;
 
@@ -56,7 +56,7 @@ public class WeatherServiceProxyImpl implements WeatherServiceProxy {
      * @return string
      */
     @Override
-    public String sendWeatherMail() throws IOException {
+    public BaseAO sendWeatherMail(){
         // 设置获取天气途径
         logger.info("设置天气途径");
         String url = "http://d1.weather.com.cn/weather_index/101020100.html?_=" + System.currentTimeMillis();
@@ -78,9 +78,17 @@ public class WeatherServiceProxyImpl implements WeatherServiceProxy {
         logger.info("整理天气数据");
         String data = responseEntity.getBody();
         String[] split = data.replaceAll(" ", "").split("var");
-        Weather weather = objectMapper.readValue(split[1].substring(split[1].indexOf(":") + 1, split[1].length() - 2), Weather.class);
-        WeatherDetail weatherDetail = objectMapper.readValue(split[3].substring(split[3].indexOf("=") + 1, split[3].length() - 1), WeatherDetail.class);
-        WeatherCustom weatherCustom = objectMapper.readValue(split[4].substring(split[4].indexOf(":") + 1, split[4].lastIndexOf(",")), WeatherCustom.class);
+        Weather weather = null;
+        WeatherDetail weatherDetail = null;
+        WeatherCustom weatherCustom = null;
+        try {
+            weather = objectMapper.readValue(split[1].substring(split[1].indexOf(":") + 1, split[1].length() - 2), Weather.class);
+            weatherDetail = objectMapper.readValue(split[3].substring(split[3].indexOf("=") + 1, split[3].length() - 1), WeatherDetail.class);
+            weatherCustom = objectMapper.readValue(split[4].substring(split[4].indexOf(":") + 1, split[4].lastIndexOf(",")), WeatherCustom.class);
+        } catch (JsonProcessingException e) {
+            e.printStackTrace();
+            return JsonResult.failureMap(ConstantMsg.JACKSON_ERROR_AS_BEAN);
+        }
 
         // 整理邮件数据
         logger.info("整理邮件数据");
@@ -89,7 +97,12 @@ public class WeatherServiceProxyImpl implements WeatherServiceProxy {
         String from = weatherConfigMapper.getOneByType(ConstantMsg.TYPE_FROM).getValue();
 
         // 设置收件人 寄件人 内容
-        logger.info("收件人 :[{}]", objectMapper.writeValueAsString(to));
+        try {
+            logger.info("收件人 :[{}]", objectMapper.writeValueAsString(to));
+        } catch (JsonProcessingException e) {
+            e.printStackTrace();
+            return JsonResult.failureMap(ConstantMsg.JACKSON_ERROR_AS_BEAN);
+        }
         simpleMailMessage.setTo(to);
         simpleMailMessage.setFrom(from);
         simpleMailMessage.setSubject(getSubject());
@@ -98,7 +111,7 @@ public class WeatherServiceProxyImpl implements WeatherServiceProxy {
         logger.info("发送天气邮件");
         javaMailSender.send(simpleMailMessage);
         logger.info(ConstantMsg.SUCCESS_SEND);
-        return ConstantMsg.SUCCESS_SEND;
+        return JsonResult.successMap(ConstantMsg.SUCCESS_SEND);
 
     }
     //🧐  🤪
@@ -165,7 +178,7 @@ public class WeatherServiceProxyImpl implements WeatherServiceProxy {
      * @return string
      */
     @Override
-    public String addSubject(String subject) {
+    public BaseAO addSubject(String subject) {
         LocalDateTime now = LocalDateTime.now();
         WeatherConfig weather = new WeatherConfig();
         weather.setUpdateTime(now);
@@ -174,7 +187,7 @@ public class WeatherServiceProxyImpl implements WeatherServiceProxy {
         weather.setValue(subject);
         weatherConfigMapper.insert(weather);
         logger.info(ConstantMsg.SUCCESS_INSERT + " -- subject:" + weather.getValue());
-        return ConstantMsg.SUCCESS_INSERT;
+        return JsonResult.successMap(ConstantMsg.SUCCESS_INSERT);
     }
 
     /**
@@ -184,13 +197,13 @@ public class WeatherServiceProxyImpl implements WeatherServiceProxy {
      * @return string
      */
     @Override
-    public String deleteSubject(Long id) {
+    public BaseAO deleteSubject(Long id) {
         WeatherConfig weatherConfig = new WeatherConfig();
         weatherConfig.setStatus(0);
         weatherConfig.setId(id);
         weatherConfigMapper.updateByPrimaryKeySelective(weatherConfig);
         logger.info(ConstantMsg.SUCCESS_DELETE + " -- id:" + id);
-        return ConstantMsg.SUCCESS_DELETE;
+        return JsonResult.successMap(ConstantMsg.SUCCESS_DELETE);
     }
 
     /**
@@ -199,19 +212,21 @@ public class WeatherServiceProxyImpl implements WeatherServiceProxy {
      * @return list
      */
     @Override
-    public List<WeatherConfig> getAllSubject() {
+    public BaseAO getAllSubject() {
         List<WeatherConfig> allByType = weatherConfigMapper.getAllByType(ConstantMsg.TYPE_SUBJECT);
         try {
             System.out.println(objectMapper.writeValueAsString(allByType));
         } catch (JsonProcessingException e) {
             e.printStackTrace();
+            return JsonResult.failureMap(ConstantMsg.JACKSON_ERROR_AS_STRING, allByType);
         }
-        return allByType;
+        return JsonResult.successMap(ConstantMsg.SUCCESS_FIND, allByType);
     }
 
     @Override
-    public List<Map> test() {
-        return weatherConfigMapper.test(ConstantMsg.TYPE_SUBJECT);
+    public BaseAO test() {
+        List<Map> resultList = weatherConfigMapper.test(ConstantMsg.TYPE_SUBJECT);
+        return JsonResult.successMap(ConstantMsg.SUCCESS_FIND, resultList);
     }
 
     public String stealSubject(){

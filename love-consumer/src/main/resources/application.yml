@@ -1,0 +1,32 @@
+server:
+  port: 10003
+
+
+spring:
+  # 设置date返回数据为时间戳
+  jackson:
+    serialization:
+      WRITE_DATES_AS_TIMESTAMPS: true
+  application:
+    name: love-consumer
+
+
+eureka:
+  instance:
+    hostname: love-consumer
+    lease-renewal-interval-in-seconds: 5
+    lease-expiration-duration-in-seconds: 10
+    prefer-ip-address: true
+  client:
+    registerWithEureka: true
+    fetchRegistry: true
+    service-url:
+      defaultZone: http://182.43.148.85:8761/eureka/
+#      defaultZone: http://10.0.31.34:8761/eureka/
+feign:
+  client:
+    config:
+      default:
+        connectTimeout: 20000
+        readTimeout: 20000
+

@@ -16,6 +16,9 @@ public class ConstantMsg {
     public static final String SUCCESS_SEND = "发送成功";
     public static final String FAILURE_SEND = "发送失败";
 
+    public static final String JACKSON_ERROR_AS_STRING = "JACKSON解析数据出错 AS_STRING";
+    public static final String JACKSON_ERROR_AS_BEAN = "JACKSON解析数据出错 AS_BEAN";
+
     public static final String IP_UN_KNOWN = "unKnown";
 
     /**

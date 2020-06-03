@@ -1,4 +1,4 @@
-package com.mydemo.loveprovider.service;
+package com.mydemo.loveconsumer.service;
 
 import com.mydemo.common.result.BaseAO;
 import org.springframework.cloud.openfeign.FeignClient;
@@ -10,7 +10,6 @@ import org.springframework.web.bind.annotation.RequestParam;
  */
 @FeignClient("love-provider")
 public interface WeatherServiceProxy {
-
     /**
      * 发送邮件
      *
