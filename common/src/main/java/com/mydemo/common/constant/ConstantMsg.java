@@ -28,4 +28,5 @@ public class ConstantMsg {
     public static final String TYPE_FROM = "from";
     public static final String TYPE_SUBJECT = "subject";
 
+    public static final String ANON = "/anon/";
 }
