@@ -1,8 +1,13 @@
 package com.mydemo.gateway.config;
 
+import com.alibaba.fastjson.JSONObject;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.mydemo.gateway.constant.ConstantMsg;
+import com.mydemo.gateway.result.BaseAO;
+import com.mydemo.gateway.result.JsonResult;
+import jdk.nashorn.internal.ir.debug.JSONWriter;
 import org.springframework.cloud.gateway.filter.GatewayFilterChain;
 import org.springframework.cloud.gateway.filter.GlobalFilter;
 import org.springframework.cloud.gateway.filter.factory.rewrite.CachedBodyOutputMessage;
@@ -28,7 +33,7 @@ import reactor.core.publisher.Flux;
 import reactor.core.publisher.Mono;
 
 import javax.annotation.Resource;
-import java.net.URI;
+import java.nio.charset.StandardCharsets;
 import java.util.Objects;
 
 /**
@@ -40,9 +45,6 @@ public class AuthorizeFilter implements GlobalFilter, Ordered {
     private static final String AUTHORIZE_TOKEN = "token";
     private static final String AUTHORIZE_UID = "uid";
 
-
-    @Resource
-    ObjectMapper objectMapper;
 
     @Override
     public Mono<Void> filter(ServerWebExchange exchange, GatewayFilterChain chain) {
@@ -74,8 +76,15 @@ public class AuthorizeFilter implements GlobalFilter, Ordered {
         ServerHttpResponse response = exchange.getResponse();
         boolean boo = (StringUtils.isEmpty(token) || StringUtils.isEmpty(uid)) && !HttpMethod.POST.equals(request.getMethod());
         if (boo) {
+            // 验证失败
             response.setStatusCode(HttpStatus.UNAUTHORIZED);
-            return response.setComplete();
+            // 返回json格式错误信息
+            BaseAO resultInfo = JsonResult.authFailureMap(ConstantMsg.PARAM_IS_NULL);
+            String resultInfoString = JSONObject.toJSONString(resultInfo);
+            byte[] bytes = resultInfoString.getBytes(StandardCharsets.UTF_8);
+            DataBuffer buffer = exchange.getResponse().bufferFactory().wrap(bytes);
+            return exchange.getResponse().writeWith(Flux.just(buffer));
+
         }else if (HttpMethod.POST.equals(exchange.getRequest().getMethod())){
             //重新构造request，参考ModifyRequestBodyGatewayFilterFactory
             ServerRequest serverRequest = ServerRequest.create(exchange, HandlerStrategies.withDefaults().messageReaders());
@@ -86,18 +95,21 @@ public class AuthorizeFilter implements GlobalFilter, Ordered {
                 System.out.println(mediaType.toString());
                 if (MediaType.APPLICATION_JSON.isCompatibleWith(mediaType)) {
                     JsonNode jsonNode = null;
-                    try {
-                        jsonNode = objectMapper.readTree(body);
-                    } catch (JsonProcessingException e) {
-                        e.printStackTrace();
+
+                    JSONObject jsonObject = JSONObject.parseObject(body);
+
+                    assert jsonObject != null : "jsonNode为null";
+                    String tokenT = jsonObject.getString("token");
+                    if (Objects.isNull(tokenT)){
+                        // 验证失败
+                        response.setStatusCode(HttpStatus.UNAUTHORIZED);
+                        // 返回json格式错误信息
+                        BaseAO resultInfo = JsonResult.authFailureMap(ConstantMsg.PARAM_IS_NULL);
+                        String resultInfoString = JSONObject.toJSONString(resultInfo);
+                        byte[] bytes = resultInfoString.getBytes(StandardCharsets.UTF_8);
+                        DataBuffer buffer = exchange.getResponse().bufferFactory().wrap(bytes);
+                        return exchange.getResponse().writeWith(Flux.just(buffer));
                     }
-                    assert jsonNode != null : "jsonNode为null";
-                    JsonNode param = jsonNode.get("token");
-                    if (Objects.isNull(param)){
-                        exchange.getResponse().setStatusCode(HttpStatus.UNAUTHORIZED);
-                        return Mono.error(new Exception("失败"));
-                    }
-                    String tokenT = param.asText();
                     String newBody;
                     System.out.println(jsonNode.toString());
                     String authTokenRedis = "stringRedisTemplate.opsForValue().get(uid)";
