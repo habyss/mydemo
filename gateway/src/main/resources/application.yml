@@ -1,0 +1,14 @@
+server:
+  port: 10005
+service-url:
+  love: http://182.43.148.85:10003
+spring:
+  cloud:
+    gateway:
+      routes:
+        - id: love #路由的ID
+          uri: ${service-url.love}/ #匹配后路由地址
+          predicates: # 断言，路径相匹配的进行路由
+            - Path=/love/**
+          filters:
+            - StripPrefix=1 # 截取
