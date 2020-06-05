@@ -76,8 +76,8 @@ mybatis:
 eureka:
   client:
     service-url:
-      defaultZone: http://182.43.148.85:8761/eureka/
-#      defaultZone: http://10.0.31.34:8761/eureka/
+#      defaultZone: http://182.43.148.85:8761/eureka/
+      defaultZone: http://10.0.31.34:8761/eureka/
 
 #  instance:
 #    lease-renewal-interval-in-seconds: 10

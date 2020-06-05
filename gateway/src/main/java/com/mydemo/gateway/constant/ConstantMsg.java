@@ -5,8 +5,9 @@ package com.mydemo.gateway.constant;
  */
 public class ConstantMsg {
 
-   public static final String PARAM_IS_NULL = "uid或token为空";
+   public static final String PARAM_IS_NULL = "uid或token为空或不匹配";
 
-   public static final String JACKSON_ERROR_AS_STRING = "JACKSON解析数据出错 AS_STRING";
-   public static final String JACKSON_ERROR_AS_BEAN = "JACKSON解析数据出错 AS_BEAN";
+
+   public static final String AUTHORIZE_TOKEN = "token";
+   public static final String URI_ANON = "/anon/*";
 }

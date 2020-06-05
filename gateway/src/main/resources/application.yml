@@ -5,10 +5,21 @@ service-url:
 spring:
   cloud:
     gateway:
+      discovery:
+        locator:
+          enabled: true
+          lowerCaseServiceId: true
       routes:
         - id: love #路由的ID
-          uri: ${service-url.love}/ #匹配后路由地址
+          uri: lb://love-consumer #匹配后路由地址
           predicates: # 断言，路径相匹配的进行路由
             - Path=/love/**
           filters:
             - StripPrefix=1 # 截取
+  application:
+    name: gateway
+eureka:
+  client:
+    service-url:
+#      defaultZone: http://182.43.148.85:8761/eureka/
+      defaultZone: http://10.0.31.34:8761/eureka/
