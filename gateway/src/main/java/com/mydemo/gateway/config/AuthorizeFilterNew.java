@@ -21,12 +21,18 @@ import java.util.Objects;
 
 /**
  * token校验全局过滤器
+ *
  * @author kun.han
  */
 @Component
 public class AuthorizeFilterNew implements GlobalFilter, Ordered {
 
     public static Logger LOGGER = LoggerFactory.getLogger(AuthorizeFilterNew.class);
+
+    private static void run() {
+        LOGGER.info("请求结束");
+    }
+
 
     @Override
     public Mono<Void> filter(ServerWebExchange exchange, GatewayFilterChain chain) {
@@ -42,8 +48,8 @@ public class AuthorizeFilterNew implements GlobalFilter, Ordered {
 
         // 某些路径不作验证
         String path = request.getPath().toString();
-        if (path.contains(ConstantMsg.URI_ANON)){
-            return chain.filter(exchange);
+        if (path.contains(ConstantMsg.URI_ANON)) {
+            return chain.filter(exchange).then(Mono.fromRunnable(AuthorizeFilterNew::run));
         }
         // 试图从header获取关键验证参数
         HttpHeaders headers = request.getHeaders();
@@ -53,18 +59,17 @@ public class AuthorizeFilterNew implements GlobalFilter, Ordered {
             token = request.getQueryParams().getFirst(ConstantMsg.AUTHORIZE_TOKEN);
         }
         // 试图从xxx-www-f 和 application/json 获取关键验证参数
-        if (!StringUtils.hasText(token) && Objects.nonNull(requestBody)){
+        if (!StringUtils.hasText(token) && Objects.nonNull(requestBody)) {
             MediaType mediaType = request.getHeaders().getContentType();
             token = AuthUtils.getTokenByMediaType(requestBody, mediaType);
         }
         // 获取到验证参数 进行验证
-        if (AuthUtils.authTokenNormal(token)){
-            return chain.filter(exchange);
-        }else {
+        if (AuthUtils.authTokenNormal(token)) {
+            return chain.filter(exchange).then(Mono.fromRunnable(AuthorizeFilterNew::run));
+        } else {
             return AuthUtils.authFailure(exchange);
         }
     }
-
 
 
     @Override

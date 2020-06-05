@@ -18,6 +18,10 @@ import java.util.Objects;
 @Component
 public class RequestFilter implements GatewayFilter, Ordered {
 
+    private static void run() {
+        LOGGER.info("请求结束");
+    }
+
     public static Logger LOGGER = LoggerFactory.getLogger(RequestFilter.class);
 
     @Override
@@ -33,7 +37,7 @@ public class RequestFilter implements GatewayFilter, Ordered {
             // 验证
             String token = AuthUtils.getTokenByMediaType(requestBody, exchange.getRequest().getHeaders().getContentType());
             if (AuthUtils.authTokenNormal(token)) {
-                return chain.filter(exchange);
+                return chain.filter(exchange).then(Mono.fromRunnable(RequestFilter::run));
             }else {
                 // 验证失败
                 return AuthUtils.authFailure(exchange);
