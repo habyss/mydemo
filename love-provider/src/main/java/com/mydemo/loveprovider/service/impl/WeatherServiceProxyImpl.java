@@ -225,6 +225,7 @@ public class WeatherServiceProxyImpl implements WeatherServiceProxy {
             return JsonResult.failureMap(ConstantMsg.JACKSON_ERROR_AS_STRING, subjectResult);
         }
         PageInfo<WeatherConfig> info = new PageInfo<>(subjectResult);
+        int i = 1 / 0;
         return JsonResult.successMap(ConstantMsg.SUCCESS_FIND, info);
     }
 

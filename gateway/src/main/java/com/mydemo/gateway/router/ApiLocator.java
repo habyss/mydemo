@@ -54,8 +54,8 @@ spring:
                                 .header(HttpHeaders.CONTENT_TYPE, MediaType.APPLICATION_FORM_URLENCODED_VALUE)
                                 .or()
                                 .header(HttpHeaders.CONTENT_TYPE, MediaType.APPLICATION_JSON_VALUE)
-                                .and()
-                                .method(HttpMethod.POST)
+                                // .and()
+                                // .method(HttpMethod.POST)
                                 .and()
                                 .readBody(String.class, readBody -> {
                                     LOGGER.info("request method POST, body  is:{}", readBody);
@@ -64,7 +64,7 @@ spring:
                                 .and()
                                 .path("/auth/**")
                                 .filters(f -> {
-                                    f.filter(requestFilter);
+                                    // f.filter(requestFilter);
                                     f.stripPrefix(1);
                                     return f;
                                 })

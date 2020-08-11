@@ -57,7 +57,7 @@ public class UploadController {
             LOGGER.info("读取到数据:{}", objectMapper.writeValueAsString(data));
         }
         System.out.println(listMap.size());
-        return JsonResult.successMap(ConstantMsg.SUCCESS_FIND, listMap);
+        return JsonResult.successMap(ConstantMsg.SUCCESS_UPLOAD, listMap);
     }
 
     /**
@@ -76,7 +76,7 @@ public class UploadController {
             LOGGER.info("读取到数据:{}", objectMapper.writeValueAsString(data));
         }
         System.out.println(list.size());
-        return JsonResult.successMap(ConstantMsg.SUCCESS_FIND, list);
+        return JsonResult.successMap(ConstantMsg.SUCCESS_UPLOAD, list);
     }
 
     /**
@@ -90,7 +90,7 @@ public class UploadController {
     public BaseAO normalExcelNoBeanNoBack(@RequestParam("file") MultipartFile file) throws IOException {
         // sheetNo 0为第一个sheet -> 依次
         EasyExcel.read(file.getInputStream(), new NoModelDataListener()).sheet(0).doRead();
-        return JsonResult.successMap(ConstantMsg.SUCCESS_FIND);
+        return JsonResult.successMap(ConstantMsg.SUCCESS_UPLOAD);
     }
 
     /**
@@ -104,7 +104,7 @@ public class UploadController {
     public BaseAO normalExcelHasBeanNoBack(@RequestParam("file") MultipartFile file) throws IOException {
         // sheetNo 0为第一个sheet -> 依次
         EasyExcel.read(file.getInputStream(), DemoData.class, new DemoDataListener(objectMapper)).sheet(0).doRead();
-        return JsonResult.successMap(ConstantMsg.SUCCESS_FIND);
+        return JsonResult.successMap(ConstantMsg.SUCCESS_UPLOAD);
     }
 
 
@@ -136,7 +136,7 @@ public class UploadController {
         // 这里千万别忘记关闭，读的时候会创建临时文件，到时磁盘会崩的
         excelReader.finish();
 
-        return JsonResult.successMap(ConstantMsg.SUCCESS_FIND);
+        return JsonResult.successMap(ConstantMsg.SUCCESS_UPLOAD);
     }
 
 }

@@ -58,7 +58,14 @@ public class WeatherController {
      */
     @GetMapping("getAllSubject")
     BaseAO getAllSubject(@Valid PageParam pageParam){
-        return weatherServiceProxy.getAllSubject(pageParam);
+        BaseAO subject = null;
+        try {
+            subject = weatherServiceProxy.getAllSubject(pageParam);
+        }catch (Exception e){
+            System.out.println(e);
+        }
+        System.out.println(subject);
+        return subject;
     }
 
     @RequestMapping("test")

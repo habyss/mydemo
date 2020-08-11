@@ -50,6 +50,14 @@ public class AuthUtils {
         return JSONObject.parseObject(JSONObject.toJSONString(map));
     }
 
+    /**
+     * Gets token by media type.
+     * 从body中获取想要的数据
+     *
+     * @param requestBody the request body
+     * @param mediaType   the media type
+     * @return the token by media type
+     */
     public static String getTokenByMediaType(String requestBody, MediaType mediaType) {
         String token;
         if (MediaType.APPLICATION_FORM_URLENCODED.isCompatibleWith(mediaType)){

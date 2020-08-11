@@ -36,9 +36,7 @@ public class AuthorizeFilterNew implements GlobalFilter, Ordered {
 
     @Override
     public Mono<Void> filter(ServerWebExchange exchange, GatewayFilterChain chain) {
-
         ServerHttpRequest request = exchange.getRequest();
-        String requestBody = exchange.getAttribute("cachedRequestBodyObject");
 
         InetSocketAddress remoteAddress = request.getRemoteAddress();
         assert remoteAddress != null : "remoteAddress 为空";
@@ -59,6 +57,8 @@ public class AuthorizeFilterNew implements GlobalFilter, Ordered {
             token = request.getQueryParams().getFirst(ConstantMsg.AUTHORIZE_TOKEN);
         }
         // 试图从xxx-www-f 和 application/json 获取关键验证参数
+        String requestBody = exchange.getAttribute("cachedRequestBodyObject");
+        LOGGER.info("requestBody : {}", requestBody);
         if (!StringUtils.hasText(token) && Objects.nonNull(requestBody)) {
             MediaType mediaType = request.getHeaders().getContentType();
             token = AuthUtils.getTokenByMediaType(requestBody, mediaType);

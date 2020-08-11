@@ -3,7 +3,7 @@ server:
 
 
 spring:
-  # ÉèÖÃdate·µ»ØÊý¾ÝÎªÊ±¼ä´Á
+  # ï¿½ï¿½ï¿½ï¿½dateï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ÎªÊ±ï¿½ï¿½ï¿½
   jackson:
     serialization:
       WRITE_DATES_AS_TIMESTAMPS: true
@@ -11,7 +11,7 @@ spring:
     name: love-consumer
 
 
-    #      Spring Cloud Netflix RibbonÏÖÔÚ´¦ÓÚÎ¬»¤Ä£Ê½£¬Òò´ËÎÒÃÇ½¨Òé¸ÄÓÃSpring Cloud LoadBalancer
+    #      Spring Cloud Netflix Ribbonï¿½ï¿½ï¿½Ú´ï¿½ï¿½ï¿½Î¬ï¿½ï¿½Ä£Ê½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Ç½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Spring Cloud LoadBalancer
   cloud:
     loadbalancer:
       ribbon:
@@ -23,7 +23,7 @@ eureka:
   client:
     service-url:
 #      defaultZone: http://182.43.148.85:8761/eureka/
-      defaultZone: http://10.0.31.34:8761/eureka/
+      defaultZone: http://localhost:8761/eureka/
 feign:
   client:
     config:

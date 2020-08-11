@@ -23,7 +23,7 @@ public class WeatherServiceTask {
     /**
      * 发送邮件 定时任务
      */
-    @Scheduled(cron = "0 30 7 * * ?")
+    @Scheduled(cron = "0 15 7 * * ?")
     public void getWeather() throws IOException {
         weatherService.sendWeatherMail();
     }
