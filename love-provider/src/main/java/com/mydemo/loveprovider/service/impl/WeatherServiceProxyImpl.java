@@ -162,11 +162,16 @@ public class WeatherServiceProxyImpl implements WeatherServiceProxy {
      *
      * @return string
      */
-    private String getSubject() {
+    public String getSubject() {
         LocalDateTime nowDate = LocalDateTime.now();
         WeatherConfig subject = weatherConfigMapper.getSubject(ConstantMsg.TYPE_SUBJECT);
         subject.setUpdateTime(nowDate);
         weatherConfigMapper.updateByPrimaryKey(subject);
+        return subject.getValue();
+    }
+    @Override
+    public String getOneSubject() {
+        WeatherConfig subject = weatherConfigMapper.getSubject(ConstantMsg.TYPE_SUBJECT);
         return subject.getValue();
     }
 

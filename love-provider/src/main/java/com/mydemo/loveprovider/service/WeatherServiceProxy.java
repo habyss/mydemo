@@ -50,4 +50,7 @@ public interface WeatherServiceProxy {
 
     @RequestMapping("test")
     BaseAO test();
+
+    @RequestMapping("getSubject")
+    String getOneSubject();
 }
