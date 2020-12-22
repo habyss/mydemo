@@ -12,7 +12,6 @@ import com.mydemo.loveprovider.entity.WeatherConfig;
 import com.mydemo.loveprovider.entity.model.PageParam;
 import com.mydemo.loveprovider.entity.model.Weather;
 import com.mydemo.loveprovider.entity.model.WeatherCustom;
-import com.mydemo.loveprovider.entity.model.WeatherDetail;
 import com.mydemo.loveprovider.mapper.WeatherConfigMapper;
 import com.mydemo.loveprovider.service.WeatherServiceProxy;
 import org.slf4j.Logger;
@@ -32,6 +31,7 @@ import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
+import java.util.Objects;
 
 /**
  * @author kun.han on 2019/6/14 11:04
@@ -80,13 +80,13 @@ public class WeatherServiceProxyImpl implements WeatherServiceProxy {
         //整理数据
         logger.info("整理天气数据");
         String data = responseEntity.getBody();
-        String[] split = data.replaceAll(" ", "").split("var");
-        Weather weather = null;
-        WeatherDetail weatherDetail = null;
-        WeatherCustom weatherCustom = null;
+        String[] split = Objects.requireNonNull(data).replaceAll(" ", "").split("var");
+        Weather weather;
+        /// WeatherDetail weatherDetail = null;
+        WeatherCustom weatherCustom;
         try {
             weather = objectMapper.readValue(split[1].substring(split[1].indexOf(":") + 1, split[1].length() - 2), Weather.class);
-            weatherDetail = objectMapper.readValue(split[3].substring(split[3].indexOf("=") + 1, split[3].length() - 1), WeatherDetail.class);
+            /// weatherDetail = objectMapper.readValue(split[3].substring(split[3].indexOf("=") + 1, split[3].length() - 1), WeatherDetail.class);
             weatherCustom = objectMapper.readValue(split[4].substring(split[4].indexOf(":") + 1, split[4].lastIndexOf(",")), WeatherCustom.class);
         } catch (JsonProcessingException e) {
             e.printStackTrace();
@@ -230,7 +230,6 @@ public class WeatherServiceProxyImpl implements WeatherServiceProxy {
             return JsonResult.failureMap(ConstantMsg.JACKSON_ERROR_AS_STRING, subjectResult);
         }
         PageInfo<WeatherConfig> info = new PageInfo<>(subjectResult);
-        int i = 1 / 0;
         return JsonResult.successMap(ConstantMsg.SUCCESS_FIND, info);
     }
 

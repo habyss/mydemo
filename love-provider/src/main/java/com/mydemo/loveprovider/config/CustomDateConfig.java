@@ -1,7 +1,6 @@
 package com.mydemo.loveprovider.config;
 
 import com.fasterxml.jackson.annotation.JsonInclude;
-import com.fasterxml.jackson.core.JsonParser;
 import com.fasterxml.jackson.databind.DeserializationFeature;
 import com.fasterxml.jackson.databind.MapperFeature;
 import com.fasterxml.jackson.databind.ObjectMapper;
@@ -39,8 +38,8 @@ public class CustomDateConfig implements WebMvcConfigurer {
         //LocalDateTime系列序列化和反序列化模块，继承自jsr310，我们在这里修改了日期格式
         JavaTimeModule javaTimeModule = new JavaTimeModule();
         // LocalDateTime 这里只需要LocalDateTime 如果需要转其他的,相应放开注释, 并在上面两个类中适当修改
-        javaTimeModule.addSerializer(LocalDateTime.class, new CustomDateSerializer.LocalDateTimeSerializer());
-        javaTimeModule.addDeserializer(LocalDateTime.class,new CustomDateDeserializer.LocalDateTimeDeserializer());
+        javaTimeModule.addSerializer(LocalDateTime.class, new CustomLocalDateSerializer());
+        javaTimeModule.addDeserializer(LocalDateTime.class,new CustomLocalDateDeserializer());
         // // LocalDate
         // javaTimeModule.addSerializer(LocalDate.class, new CustomDateSerializer.LocalDateSerializer());
         // javaTimeModule.addDeserializer(LocalDate.class, new CustomDateDeserializer.LocalDateDeserializer());
@@ -58,6 +57,6 @@ public class CustomDateConfig implements WebMvcConfigurer {
     @Bean
     public Converter<String, LocalDateTime> localDateConverter() {
         //此处不能替换为lambda表达式
-        return new CustomDateConverter.LocalDateConvert();
+        return new CustomLocalDateConverter();
     }
 }
