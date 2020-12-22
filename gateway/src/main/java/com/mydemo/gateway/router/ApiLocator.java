@@ -11,6 +11,7 @@ import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpMethod;
 import org.springframework.http.MediaType;
 import org.springframework.stereotype.Component;
+import reactor.core.publisher.Mono;
 
 import javax.annotation.Resource;
 
@@ -46,10 +47,8 @@ spring:
           filters:
             - StripPrefix=1 # 截取
          */
-        RouteLocatorBuilder.Builder routes = builder.routes();
-        RouteLocatorBuilder.Builder serviceProvider = routes
-
-                .route("love",
+        RouteLocatorBuilder.Builder serviceProvider = builder.routes()
+                .route("auth",
                         r -> r
                                 .header(HttpHeaders.CONTENT_TYPE, MediaType.APPLICATION_FORM_URLENCODED_VALUE)
                                 .or()
@@ -57,6 +56,7 @@ spring:
                                 // .and()
                                 // .method(HttpMethod.POST)
                                 .and()
+                                // 读到缓存 cachedRequestBodyObject 中
                                 .readBody(String.class, readBody -> {
                                     LOGGER.info("request method POST, body  is:{}", readBody);
                                     return true;
@@ -64,11 +64,16 @@ spring:
                                 .and()
                                 .path("/auth/**")
                                 .filters(f -> {
-                                    // f.filter(requestFilter);
+                                    f.filter(requestFilter);
+                                    // f.modifyRequestBody(String.class, String.class, (exchange, s) -> {
+                                    //     exchange.getRequest();
+                                    //     return Mono.just(s.toUpperCase());
+                                    // });
                                     f.stripPrefix(1);
                                     return f;
                                 })
                                 .uri("http://10.0.31.34:10005"));
+
         RouteLocator routeLocator = serviceProvider.build();
         System.out.println("custom RouteLocator is loading ... {}" + routeLocator);
         return routeLocator;

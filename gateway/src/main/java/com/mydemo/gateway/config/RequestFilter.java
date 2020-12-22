@@ -19,7 +19,7 @@ import java.util.Objects;
 public class RequestFilter implements GatewayFilter, Ordered {
 
     private static void run() {
-        LOGGER.info("请求结束");
+        LOGGER.info("============= 请求结束");
     }
 
     public static Logger LOGGER = LoggerFactory.getLogger(RequestFilter.class);
@@ -27,22 +27,23 @@ public class RequestFilter implements GatewayFilter, Ordered {
     @Override
     public Mono<Void> filter(ServerWebExchange exchange, GatewayFilterChain chain) {
 
-        LOGGER.info("RequestFilter");
+        LOGGER.info("============= RequestFilter");
 
-        String requestBody = exchange.getAttribute("cachedRequestBodyObject");
-        if (Objects.isNull(requestBody)){
-            // 没有body 验证失败
-            return AuthUtils.authFailure(exchange);
-        }else {
-            // 验证
-            String token = AuthUtils.getTokenByMediaType(requestBody, exchange.getRequest().getHeaders().getContentType());
-            if (AuthUtils.authTokenNormal(token)) {
-                return chain.filter(exchange).then(Mono.fromRunnable(RequestFilter::run));
-            }else {
-                // 验证失败
-                return AuthUtils.authFailure(exchange);
-            }
-        }
+        // String requestBody = exchange.getAttribute("cachedRequestBodyObject");
+        // if (Objects.isNull(requestBody)){
+        //     // 没有body 验证失败
+        //     return AuthUtils.authFailure(exchange);
+        // }else {
+        //     // 验证
+        //     String token = AuthUtils.getTokenByMediaType(requestBody, exchange.getRequest().getHeaders().getContentType());
+        //     if (AuthUtils.authTokenNormal(token)) {
+        //         return chain.filter(exchange).then(Mono.fromRunnable(RequestFilter::run));
+        //     }else {
+        //         // 验证失败
+        //         return AuthUtils.authFailure(exchange);
+        //     }
+        // }
+        return chain.filter(exchange).then(Mono.fromRunnable(RequestFilter::run));
     }
 
     @Override

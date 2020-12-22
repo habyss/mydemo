@@ -30,12 +30,13 @@ public class AuthorizeFilterNew implements GlobalFilter, Ordered {
     public static Logger LOGGER = LoggerFactory.getLogger(AuthorizeFilterNew.class);
 
     private static void run() {
-        LOGGER.info("请求结束");
+        LOGGER.info("============= 请求结束");
     }
 
 
     @Override
     public Mono<Void> filter(ServerWebExchange exchange, GatewayFilterChain chain) {
+        LOGGER.info("============= 全局拦截处理");
         ServerHttpRequest request = exchange.getRequest();
 
         InetSocketAddress remoteAddress = request.getRemoteAddress();
@@ -58,7 +59,7 @@ public class AuthorizeFilterNew implements GlobalFilter, Ordered {
         }
         // 试图从xxx-www-f 和 application/json 获取关键验证参数
         String requestBody = exchange.getAttribute("cachedRequestBodyObject");
-        LOGGER.info("requestBody : {}", requestBody);
+        LOGGER.info("filter cachedRequestBodyObject requestBody : {}", requestBody);
         if (!StringUtils.hasText(token) && Objects.nonNull(requestBody)) {
             MediaType mediaType = request.getHeaders().getContentType();
             token = AuthUtils.getTokenByMediaType(requestBody, mediaType);
