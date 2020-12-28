@@ -40,19 +40,19 @@ public class RequestLimitContract {
         // throw new RuntimeException("test");
     }
 
-//    @Before("within(com.test.demo.controller.*)")
-//    public void requestLimit(final JoinPoint joinPoint){
-//        System.out.println("limit - count" + 1 + " time" + 2);
-//        String ip = getIp();
-//        System.out.println(ip);
-//    }
+///    @Before("within(com.test.demo.controller.*)")
+///    public void requestLimit(final JoinPoint joinPoint){
+///        System.out.println("limit - count" + 1 + " time" + 2);
+///        String ip = getIp();
+///        System.out.println(ip);
+///    }
 
     @Around("@annotation(limit)")
     public Object test(final ProceedingJoinPoint joinPoint, RequestLimit limit) throws Throwable {
         System.out.println("around - " + System.currentTimeMillis());
-        joinPoint.proceed();
+        Object proceed = joinPoint.proceed();
         System.out.println("around - " + System.currentTimeMillis());
-        return new Object();
+        return proceed;
     }
 
     private String getIp() {
