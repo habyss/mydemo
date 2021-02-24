@@ -1,9 +1,11 @@
 package com.mydemo.easyexcel.controller;
 
+import cn.hutool.core.util.URLUtil;
 import com.alibaba.excel.EasyExcel;
 import com.alibaba.excel.ExcelWriter;
 import com.alibaba.excel.write.metadata.WriteSheet;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.mydemo.common.result.JsonResult;
 import com.mydemo.easyexcel.entity.DemoData;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -12,6 +14,10 @@ import org.springframework.web.bind.annotation.RestController;
 import javax.annotation.Resource;
 import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
+import java.io.InputStream;
+import java.io.UnsupportedEncodingException;
+import java.net.HttpURLConnection;
+import java.net.URL;
 import java.net.URLEncoder;
 import java.util.*;
 
@@ -29,24 +35,18 @@ public class DownController {
      */
     @Resource
     ObjectMapper objectMapper;
-
+    // String path = request.getSession().getServletContext().getRealPath("/") + "tmp/";
     /**
-     * Normal excel has bean.
+     * 普通使用bean来进行创建表格
      *
      * @param response the response
      * @throws IOException the io exception
      */
     @GetMapping("normalExcelHasBean")
     public void normalExcelHasBean(HttpServletResponse response) throws IOException {
-        // 这里注意 有同学反应使用swagger 会导致各种问题，请直接用浏览器或者用postman
-        response.setContentType("application/vnd.ms-excel");
-        response.setCharacterEncoding("utf-8");
-        // 这里URLEncoder.encode可以防止中文乱码 当然和easyexcel没有关系
-        String fileName = URLEncoder.encode("测试", "UTF-8");
-        response.setHeader("Content-disposition", "attachment;filename=" + fileName + ".xlsx");
+        setResponse(response);
 
         EasyExcel.write(response.getOutputStream(), DemoData.class).sheet("模板").doWrite(getData());
-
     }
 
 
@@ -59,13 +59,8 @@ public class DownController {
      */
     @GetMapping("downloadFailedUsingJson")
     public void downloadFailedUsingJson(HttpServletResponse response) throws IOException {
-        // 这里注意 有同学反应使用swagger 会导致各种问题，请直接用浏览器或者用postman
         try {
-            response.setContentType("application/vnd.ms-excel");
-            response.setCharacterEncoding("utf-8");
-            // 这里URLEncoder.encode可以防止中文乱码 当然和easyexcel没有关系
-            String fileName = URLEncoder.encode("测试", "UTF-8");
-            response.setHeader("Content-disposition", "attachment;filename=" + fileName + ".xlsx");
+            setResponse(response);
             // 这里需要设置不关闭流
             EasyExcel.write(response.getOutputStream(), DemoData.class).autoCloseStream(Boolean.FALSE).sheet("模板")
                     .doWrite(getData());
@@ -96,11 +91,7 @@ public class DownController {
      */
     @GetMapping("excludeOrIncludeWrite")
     public void excludeOrIncludeWrite(HttpServletResponse response) throws IOException {
-        response.setContentType("application/vnd.ms-excel");
-        response.setCharacterEncoding("utf-8");
-        // 这里URLEncoder.encode可以防止中文乱码 当然和easyexcel没有关系
-        String fileName = URLEncoder.encode("测试", "UTF-8");
-        response.setHeader("Content-disposition", "attachment;filename=" + fileName + ".xlsx");
+        setResponse(response);
 
         // 根据用户传入字段 假设我们要忽略 date
         Set<String> excludeColumnFiledNames = new HashSet<>();
@@ -131,11 +122,7 @@ public class DownController {
      */
     @GetMapping("repeatedWrite")
     public void repeatedWrite(HttpServletResponse response) throws IOException {
-        response.setContentType("application/vnd.ms-excel");
-        response.setCharacterEncoding("utf-8");
-        // 这里URLEncoder.encode可以防止中文乱码 当然和easyexcel没有关系
-        String fileName = URLEncoder.encode("测试", "UTF-8");
-        response.setHeader("Content-disposition", "attachment;filename=" + fileName + ".xlsx");
+        setResponse(response);
 
         // 方法1 如果写到同一个sheet
         // 这里 需要指定写用哪个class去写
@@ -182,6 +169,56 @@ public class DownController {
         }
         /// 千万别忘记finish 会帮忙关闭流
         excelWriter.finish();
+    }
+
+
+    /**
+     * 已有的模板中填充数据.
+     *
+     * @param response the response
+     * @throws IOException the io exception
+     */
+    public void fillExcel(HttpServletResponse response) throws IOException {
+        setResponse(response);
+
+        // 模板注意 用{} 来表示你要用的变量 如果本来就有"{","}" 特殊字符 用"\{","\}"代替
+        // 填充list 的时候还要注意 模板中{.} 多了个点 表示list
+        InputStream inStream = getInputStream("http://mytianimg.oss-cn-shanghai.aliyuncs.com/1613980440706.xlsx");
+        ExcelWriter excelWriter = EasyExcel.write(response.getOutputStream()).withTemplate(inStream).build();
+        WriteSheet writeSheet = EasyExcel.writerSheet().build();
+
+        // 这里注意 入参用了forceNewRow 代表在写入list的时候不管list下面有没有空行 都会创建一行，然后下面的数据往后移动。默认 是false，会直接使用下一行，如果没有则创建。
+        // forceNewRow 如果设置了true,有个缺点 就是他会把所有的数据都放到内存了，所以慎用
+        // 简单的说 如果你的模板有list,且list不是最后一行，下面还有数据需要填充 就必须设置 forceNewRow=true 但是这个就会把所有数据放到内存 会很耗内存
+        // FillConfig fillConfig = FillConfig.builder().forceNewRow(Boolean.TRUE).build();
+
+        // 横向填充
+        // FillConfig fillConfig = FillConfig.builder().direction(WriteDirectionEnum.HORIZONTAL).build();
+
+
+        // excelWriter.fill(data(), fillConfig, writeSheet);
+        // excelWriter.fill(data(), fillConfig, writeSheet);
+
+        // 填充
+        excelWriter.fill(getData(), writeSheet);
+        excelWriter.finish();
+    }
+
+    private InputStream getInputStream(String stringUrl) throws IOException {
+        URL url = URLUtil.url(stringUrl);
+        HttpURLConnection conn = (HttpURLConnection) url.openConnection();
+        conn.setRequestMethod("GET");
+        conn.setConnectTimeout(5 * 1000);
+        //通过输入流获取图片数据
+        return conn.getInputStream();
+    }
+
+    private void setResponse(HttpServletResponse response) throws UnsupportedEncodingException {
+        response.setContentType("application/vnd.ms-excel");
+        response.setCharacterEncoding("utf-8");
+        // 这里URLEncoder.encode可以防止中文乱码 当然和easyexcel没有关系
+        String fileName = URLEncoder.encode("测试", "UTF-8");
+        response.setHeader("Content-disposition", "attachment;filename=" + fileName + ".xlsx");
     }
 
 
